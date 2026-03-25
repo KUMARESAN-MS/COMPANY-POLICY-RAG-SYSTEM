@@ -1,0 +1,27 @@
+# Environments
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+.venv/
+env/
+.env/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Project specific
+backend/uploads/
+backend/data/
+
+# OS/IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
