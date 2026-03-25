@@ -12,20 +12,30 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def get_best_model():
-    """Dynamically find an available Gemini model."""
+    """Dynamically find an available Gemini model, prioritizing gemini-2.5-flash."""
     try:
         available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        # Prefer flash for speed/cost, then pro
-        for model_name in ["models/gemini-1.5-flash", "models/gemini-2.0-flash", "models/gemini-1.5-pro", "models/gemini-1.0-pro"]:
+        
+        # gemini-2.5-flash has free tier quota; prioritize it explicitly
+        preferred_models = [
+            "models/gemini-2.5-flash",
+            "models/gemini-1.5-flash",
+            "models/gemini-2.0-flash",
+            "models/gemini-1.5-pro",
+            "models/gemini-1.0-pro"
+        ]
+        
+        for model_name in preferred_models:
             if model_name in available_models:
                 return model_name
+                
         # Fallback to the first available if none of our preferred ones are found
         if available_models:
             return available_models[0]
     except Exception as e:
         print(f"DEBUG: Error listing models: {e}")
     # Default fallback
-    return "gemini-1.5-flash"
+    return "gemini-2.5-flash"
 
 SYSTEM_PROMPT = """You are a company policy assistant. You answer employee questions ONLY based on the provided policy context below. Follow these rules strictly:
 
