@@ -181,12 +181,41 @@ def get_all_documents() -> list[dict]:
 
 
 def delete_document(doc_id: int) -> bool:
-    """Delete a document from metadata DB. Note: FAISS index is not rebuilt here for simplicity."""
+    """Delete a document from metadata DB and rebuild the FAISS index."""
+    global _index
+
     conn = sqlite3.connect(METADATA_DB_PATH)
     cur = conn.cursor()
+
+    # Check if document exists
+    cur.execute("SELECT id FROM documents WHERE id = ?", (doc_id,))
+    if not cur.fetchone():
+        conn.close()
+        return False
+
+    # Delete chunks and document from SQLite
     cur.execute("DELETE FROM chunks WHERE doc_id = ?", (doc_id,))
     cur.execute("DELETE FROM documents WHERE id = ?", (doc_id,))
-    deleted = cur.rowcount > 0
     conn.commit()
+
+    # Rebuild FAISS index from remaining chunks
+    cur.execute("SELECT id, text FROM chunks ORDER BY id")
+    remaining_chunks = cur.fetchall()
+
+    # Create a fresh FAISS index
+    _index = faiss.IndexFlatIP(EMBEDDING_DIM)
+
+    if remaining_chunks:
+        # Re-embed all remaining chunks
+        texts = [row[1] for row in remaining_chunks]
+        embeddings = embed_texts(texts)
+        _index.add(embeddings)
+
+        # Update faiss_id references in SQLite to match new index positions
+        for new_faiss_id, (chunk_id, _) in enumerate(remaining_chunks):
+            cur.execute("UPDATE chunks SET faiss_id = ? WHERE id = ?", (new_faiss_id, chunk_id))
+        conn.commit()
+
     conn.close()
-    return deleted
+    save_index()
+    return True
