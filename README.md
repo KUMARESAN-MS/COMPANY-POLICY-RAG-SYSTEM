@@ -29,4 +29,4 @@ npm run dev
 ```
 
 ## Security & Git
-Sensitive paths including `.env`, `backend/uploads/` (uploaded PDFs), and `backend/data/` (local vector database indexing) are deliberately ignored in `.gitignore` to prevent data leakage.
+Sensitive paths including `.env`, `backend/uploads/` (uploaded PDFs), and `backend/data/` (local vector database indexing) are deliberately ignored in `.gitignore` to prevent data leakage. Additionally, general text (`*.txt`) and Markdown (`*.md`) files are ignored by default to avoid accidentally tracking temporary implementation notes, with explicit exceptions made for necessary tracked files like `README.md` and `backend/requirements.txt`.

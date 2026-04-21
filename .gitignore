@@ -25,3 +25,11 @@ backend/data/
 Thumbs.db
 .vscode/
 .idea/
+
+# General text and markdown files
+*.md
+*.txt
+
+# Important text and markdown files to track
+!README.md
+!backend/requirements.txt
