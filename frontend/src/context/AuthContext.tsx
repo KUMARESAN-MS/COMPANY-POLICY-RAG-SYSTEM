@@ -11,7 +11,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   isLoading: boolean;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string, role?: string) => Promise<void>;
   signup: (username: string, password: string, role: string, adminSecret?: string) => Promise<void>;
   logout: () => void;
 }
@@ -40,8 +40,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuth();
   }, []);
 
-  const login = useCallback(async (username: string, password: string) => {
-    const response = await apiLogin(username, password);
+  const login = useCallback(async (username: string, password: string, role?: string) => {
+    const response = await apiLogin(username, password, role);
     setToken(response.token);
     setUser({ username: response.username, role: response.role });
   }, []);

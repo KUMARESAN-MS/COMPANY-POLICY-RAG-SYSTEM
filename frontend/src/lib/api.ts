@@ -44,8 +44,8 @@ export const signup = async (
   return data;
 };
 
-export const login = async (username: string, password: string): Promise<AuthResponse> => {
-  const { data } = await client.post('/auth/login', { username, password });
+export const login = async (username: string, password: string, role?: string): Promise<AuthResponse> => {
+  const { data } = await client.post('/auth/login', { username, password, role });
   return data;
 };
 

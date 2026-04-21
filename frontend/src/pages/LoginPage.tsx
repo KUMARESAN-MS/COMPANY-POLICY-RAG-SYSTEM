@@ -5,10 +5,12 @@ import { ShieldCheck, LogIn, Loader2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
+import { cn } from '@/lib/utils';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<'employee' | 'admin'>('employee');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +25,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(username.trim(), password);
+      await login(username.trim(), password, role);
       navigate('/');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Login failed. Please try again.');
@@ -85,6 +87,36 @@ export default function LoginPage() {
                   className="absolute right-3 top-3 p-1 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Role</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setRole('employee')}
+                  className={cn(
+                    "h-12 rounded-xl border text-sm font-medium transition-all",
+                    role === 'employee'
+                      ? "bg-primary/20 border-primary/50 text-primary"
+                      : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10"
+                  )}
+                >
+                  Employee
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('admin')}
+                  className={cn(
+                    "h-12 rounded-xl border text-sm font-medium transition-all",
+                    role === 'admin'
+                      ? "bg-primary/20 border-primary/50 text-primary"
+                      : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10"
+                  )}
+                >
+                  Admin
                 </button>
               </div>
             </div>

@@ -48,6 +48,7 @@ class SignupRequest(BaseModel):
 class LoginRequest(BaseModel):
     username: str
     password: str
+    role: Optional[str] = None
 
 
 class AuthResponse(BaseModel):
@@ -107,6 +108,9 @@ async def login(req: LoginRequest):
     user = get_user_by_username(req.username.strip())
     if not user or not verify_password(req.password, user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Invalid username or password.")
+
+    if req.role and req.role.lower() != user["role"].lower():
+        raise HTTPException(status_code=401, detail="Incorrect role selected for this account.")
 
     token = create_access_token({"sub": user["username"], "role": user["role"]})
 
