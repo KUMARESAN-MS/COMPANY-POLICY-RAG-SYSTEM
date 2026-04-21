@@ -32,4 +32,5 @@ Thumbs.db
 
 # Important text and markdown files to track
 !README.md
+!requirements.txt
 !backend/requirements.txt
